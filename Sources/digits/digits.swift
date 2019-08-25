@@ -50,3 +50,20 @@ extension List where Element == Digit {
         return b.reversed()
     }
 }
+
+extension List: Equatable where Element == Digit {}
+
+public func ==(lhs: List<Digit>, rhs: List<Digit>) -> Bool {
+    switch (lhs, rhs) {
+    case (.empty, .empty):
+        return true
+    case (.list(.zero, let rtail), .list(.zero, let ltail)),
+         (.list(.one, let rtail), .list(.one, let ltail)):
+        return rtail == ltail
+    case (.list(.zero, let tail), .empty),
+         (.empty, .list(.zero, let tail)):
+        return tail == .empty
+    default:
+        return false
+    }
+}

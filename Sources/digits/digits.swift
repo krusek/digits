@@ -1,3 +1,4 @@
+public typealias Binary = List<Digit>
 
 public enum Digit {
     case zero, one
@@ -18,11 +19,11 @@ extension List: CustomStringConvertible where Element == Digit {
 
 
 extension List where Element == Digit {
-    public static var zero: List<Digit> {
+    public static var zero: Binary {
         return .list(.zero, .empty)
     }
     
-    public func incremented() -> List<Digit> {
+    public func incremented() -> Binary {
         switch self {
         case .empty:
             return .list(.one, .empty)
@@ -31,5 +32,21 @@ extension List where Element == Digit {
         case .list(.one, let list):
             return .list(.zero, list.incremented())
         }
+    }
+    
+    public static func build(_ value: Int) -> Binary {
+        var b = Binary.empty
+        var v = value
+        while v > 0 {
+            if v % 2 == 1 {
+                b = .one + b
+                v -= 1
+                v = v / 2
+            } else {
+                b = .zero + b
+                v = v / 2
+            }
+        }
+        return b.reversed()
     }
 }

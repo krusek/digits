@@ -50,12 +50,19 @@ final class digitsTests: XCTestCase {
     }
     
     func testAddition() {
-        print(Binary.build(4))
-        print(Binary.zero.incremented().incremented().incremented().incremented())
         for ix in 0...20 {
             for iy in 0...20 {
                 let sum = Binary.build(ix) + Binary.build(iy)
                 XCTAssertEqual(sum, Binary.build(ix + iy), "\(ix) + \(iy) != \(sum)")
+            }
+        }
+    }
+    
+    func testMultiplication() {
+        for ix in 0...20 {
+            for iy in 0...20 {
+                let product = Binary.build(ix) * Binary.build(iy)
+                XCTAssertEqual(product, Binary.build(ix * iy), "\(ix) * \(iy) != \(product)")
             }
         }
     }

@@ -50,6 +50,15 @@ extension List where Element == Digit {
         let r = b.reversed()
         return r
     }
+    
+    func shifted() -> Binary {
+        switch self {
+        case .empty:
+            return .empty
+        default:
+            return .list(.zero, self)
+        }
+    }
 }
 
 extension List: Equatable where Element == Digit {}
@@ -79,5 +88,23 @@ public func +(lhs: Binary, rhs: Binary) -> Binary {
         return .list(e, tail1 + tail2)
     case (.list(.one, let tail1), .list(.one, let tail2)):
         return .list(.zero, (tail1 + tail2).incremented())
+    }
+}
+
+public func *(e: Digit, n: Binary) -> Binary {
+    switch e {
+    case .one:
+        return n
+    case .zero:
+        return .zero
+    }
+}
+
+public func *(lhs: Binary, rhs: Binary) -> Binary {
+    switch (lhs, rhs) {
+    case (.empty, _), (_, .empty):
+        return .empty
+    case (.list(let d, let tail), let rhs):
+        return d * rhs + tail * rhs.shifted()
     }
 }

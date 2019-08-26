@@ -23,17 +23,17 @@ final class digitsTests: XCTestCase {
     }
     
     func testReversedExact() {
-        let b = Binary.build(.one, .zero, .zero, .one, .zero, .one)
-        let reversed = Binary.build(.one, .zero, .one, .zero, .zero, .one)
+        let b = Number.build(.one, .zero, .zero, .one, .zero, .one)
+        let reversed = Number.build(.one, .zero, .one, .zero, .zero, .one)
         XCTAssertEqual(b.reversed(), reversed)
     }
     
     func testReversedExtraZeros() {
-        let b = Binary.build(.one, .zero, .zero, .one, .zero, .one)
-        let bPadded = Binary.build(.zero, .zero, .zero, .one, .zero, .zero, .one, .zero, .one)
+        let b = Number.build(.one, .zero, .zero, .one, .zero, .one)
+        let bPadded = Number.build(.zero, .zero, .zero, .one, .zero, .zero, .one, .zero, .one)
         
-        let reversed = Binary.build(.one, .zero, .one, .zero, .zero, .one)
-        let reversedPadded = Binary.build(.one, .zero, .one, .zero, .zero, .one, .zero, .zero, .zero)
+        let reversed = Number.build(.one, .zero, .one, .zero, .zero, .one)
+        let reversedPadded = Number.build(.one, .zero, .one, .zero, .zero, .one, .zero, .zero, .zero)
         
         XCTAssertEqual(bPadded.reversed(), reversed)
         XCTAssertEqual(b.reversed(), reversedPadded)
@@ -41,10 +41,10 @@ final class digitsTests: XCTestCase {
     }
     
     func testBuildInteger() {
-        var b = Binary.empty
+        var b = Number.empty
         for ix in 0...100 {
-            XCTAssertEqual(b, Binary.build(ix), "bad build for: \(ix)")
-            XCTAssertEqual(b.description, Binary.build(ix).description, "bad description for: \(ix)")
+            XCTAssertEqual(b, Number.build(ix), "bad build for: \(ix)")
+            XCTAssertEqual(b.description, Number.build(ix).description, "bad description for: \(ix)")
             b = b.incremented()
         }
     }
@@ -52,8 +52,8 @@ final class digitsTests: XCTestCase {
     func testAddition() {
         for ix in 0...20 {
             for iy in 0...20 {
-                let sum = Binary.build(ix) + Binary.build(iy)
-                XCTAssertEqual(sum, Binary.build(ix + iy), "\(ix) + \(iy) != \(sum)")
+                let sum = Number.build(ix) + Number.build(iy)
+                XCTAssertEqual(sum, Number.build(ix + iy), "\(ix) + \(iy) != \(sum)")
             }
         }
     }
@@ -61,8 +61,8 @@ final class digitsTests: XCTestCase {
     func testMultiplication() {
         for ix in 0...20 {
             for iy in 0...20 {
-                let product = Binary.build(ix) * Binary.build(iy)
-                XCTAssertEqual(product, Binary.build(ix * iy), "\(ix) * \(iy) != \(product)")
+                let product = Number.build(ix) * Number.build(iy)
+                XCTAssertEqual(product, Number.build(ix * iy), "\(ix) * \(iy) != \(product)")
             }
         }
     }
@@ -71,8 +71,8 @@ final class digitsTests: XCTestCase {
         let max = 30
         for ix in 0...max {
             for iy in (ix+1)...(max + 1) {
-                let x = Binary.build(ix)
-                let y = Binary.build(iy)
+                let x = Number.build(ix)
+                let y = Number.build(iy)
                 XCTAssertTrue(x < y)
                 XCTAssertFalse(y < x)
             }

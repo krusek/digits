@@ -1,4 +1,4 @@
-public typealias Binary = List<Digit>
+public typealias Number = List<Digit>
 
 public enum Digit {
     case zero, one
@@ -19,11 +19,11 @@ extension List: CustomStringConvertible where Element == Digit {
 
 
 extension List where Element == Digit {
-    public static var zero: Binary {
+    public static var zero: Number {
         return .list(.zero, .empty)
     }
     
-    public func incremented() -> Binary {
+    public func incremented() -> Number {
         switch self {
         case .empty:
             return .list(.one, .empty)
@@ -34,8 +34,8 @@ extension List where Element == Digit {
         }
     }
     
-    public static func build(_ value: Int) -> Binary {
-        var b = Binary.empty
+    public static func build(_ value: Int) -> Number {
+        var b = Number.empty
         var v = value
         while v > 0 {
             if v % 2 == 1 {
@@ -51,7 +51,7 @@ extension List where Element == Digit {
         return r
     }
     
-    func shifted() -> Binary {
+    func shifted() -> Number {
         switch self {
         case .empty:
             return .empty
@@ -61,7 +61,7 @@ extension List where Element == Digit {
     }
     
     
-    fileprivate static func reduce<Result>(lhs: Binary, rhs: Binary, initial: Result, f: (Digit, Digit, Result) -> Result) -> Result {
+    fileprivate static func reduce<Result>(lhs: Number, rhs: Number, initial: Result, f: (Digit, Digit, Result) -> Result) -> Result {
         switch (lhs, rhs) {
         case (.empty, .empty):
             return f(.zero, .zero, initial)
@@ -77,7 +77,7 @@ extension List where Element == Digit {
 
 extension List: Comparable, Equatable where Element == Digit {}
 
-public func ==(lhs: Binary, rhs: Binary) -> Bool {
+public func ==(lhs: Number, rhs: Number) -> Bool {
     switch (lhs, rhs) {
     case (.empty, .empty):
         return true
@@ -92,8 +92,8 @@ public func ==(lhs: Binary, rhs: Binary) -> Bool {
     }
 }
 
-public func <(lhs: Binary, rhs: Binary) -> Bool {
-    return Binary.reduce(lhs: lhs, rhs: rhs, initial: false) { (a, b, r) -> Bool in
+public func <(lhs: Number, rhs: Number) -> Bool {
+    return Number.reduce(lhs: lhs, rhs: rhs, initial: false) { (a, b, r) -> Bool in
         if a == b {
             return r
         } else {
@@ -102,7 +102,7 @@ public func <(lhs: Binary, rhs: Binary) -> Bool {
     }
 }
 
-public func +(lhs: Binary, rhs: Binary) -> Binary {
+public func +(lhs: Number, rhs: Number) -> Number {
     switch (lhs, rhs) {
     case (.empty, let tail),
          (let tail, .empty):
@@ -115,7 +115,7 @@ public func +(lhs: Binary, rhs: Binary) -> Binary {
     }
 }
 
-public func *(e: Digit, n: Binary) -> Binary {
+public func *(e: Digit, n: Number) -> Number {
     switch e {
     case .one:
         return n
@@ -124,7 +124,7 @@ public func *(e: Digit, n: Binary) -> Binary {
     }
 }
 
-public func *(lhs: Binary, rhs: Binary) -> Binary {
+public func *(lhs: Number, rhs: Number) -> Number {
     switch (lhs, rhs) {
     case (.empty, _), (_, .empty):
         return .empty

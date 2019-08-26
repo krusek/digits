@@ -10,9 +10,9 @@ extension List: CustomStringConvertible where Element == Digit {
         case .empty:
             return ""
         case .list(.one, let tail):
-            return tail.description + "1"
+            return "1" + tail.description
         case .list(.zero, let tail):
-            return tail.description + "0"
+            return "0" + tail.description
         }
     }
 }
@@ -39,21 +39,22 @@ extension List where Element == Digit {
         var v = value
         while v > 0 {
             if v % 2 == 1 {
-                b = .one + b
+                b = .list(.one, b)
                 v -= 1
                 v = v / 2
             } else {
-                b = .zero + b
+                b = .list(.zero, b)
                 v = v / 2
             }
         }
-        return b.reversed()
+        let r = b.reversed()
+        return r
     }
 }
 
 extension List: Equatable where Element == Digit {}
 
-public func ==(lhs: List<Digit>, rhs: List<Digit>) -> Bool {
+public func ==(lhs: Binary, rhs: Binary) -> Bool {
     switch (lhs, rhs) {
     case (.empty, .empty):
         return true
@@ -65,5 +66,18 @@ public func ==(lhs: List<Digit>, rhs: List<Digit>) -> Bool {
         return tail == .empty
     default:
         return false
+    }
+}
+
+public func +(lhs: Binary, rhs: Binary) -> Binary {
+    switch (lhs, rhs) {
+    case (.empty, let tail),
+         (let tail, .empty):
+        return tail
+    case (.list(let e, let tail1), .list(.zero, let tail2)),
+         (.list(.zero, let tail1), .list(let e, let tail2)):
+        return .list(e, tail1 + tail2)
+    case (.list(.one, let tail1), .list(.one, let tail2)):
+        return .list(.zero, (tail1 + tail2).incremented())
     }
 }

@@ -78,6 +78,12 @@ final class digitsTests: XCTestCase {
             }
         }
     }
+    
+    func testMod5() {
+        for ix in 0...1000 {
+            XCTAssertEqual(Binary.build(ix).mod5(), Binary.build(ix % 5), "\(ix) % 5 != \(ix % 5)")
+        }
+    }
 
     static var allTests: [(String, () -> ())] = []
 }

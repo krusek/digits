@@ -60,6 +60,30 @@ extension List where Element == Digit {
         }
     }
     
+    public func mod5(_ index: Int = 0, _ accumulator: Binary = .zero) -> Binary {
+        let powers: [List<Digit>] = [
+            .build(1), // 1 % 5 = 1
+            .build(2), // 2 % 5 = 2
+            .build(4), // 4 % 5 = 4
+            .build(3)  // 8 % 5 = 3
+        ]
+        if self == .build(5) && index == 0 && accumulator == .zero { return .build(0) }
+        if self == .build(6) && index == 0 && accumulator == .zero { return .build(1) }
+        if self == .build(7) && index == 0 && accumulator == .zero { return .build(2) }
+        if self == .build(8) && index == 0 && accumulator == .zero { return .build(3) }
+        if self == .build(9) && index == 0 && accumulator == .zero { return .build(4) }
+        if self == .build(10) && index == 0 && accumulator == .zero { return .build(0) }
+        switch self {
+        case .empty where accumulator == Binary.build(5):
+            return .zero
+        case .empty where accumulator > List<Digit>.build(4):
+            return accumulator.mod5()
+        case .empty:
+            return accumulator
+        case .list(let d, let tail):
+            return tail.mod5((index + 1) % 4, accumulator + d * powers[index % 4])
+        }
+    }
     
     fileprivate static func reduce<Result>(lhs: Binary, rhs: Binary, initial: Result, f: (Digit, Digit, Result) -> Result) -> Result {
         switch (lhs, rhs) {

@@ -59,9 +59,23 @@ extension List where Element == Digit {
             return .list(.zero, self)
         }
     }
+    
+    
+    fileprivate static func reduce<Result>(lhs: Binary, rhs: Binary, initial: Result, f: (Digit, Digit, Result) -> Result) -> Result {
+        switch (lhs, rhs) {
+        case (.empty, .empty):
+            return f(.zero, .zero, initial)
+        case (.empty, .list(let d, let tail)):
+            return reduce(lhs:.empty, rhs:tail, initial:f(.zero, d, initial), f:f)
+        case (.list(let d, let tail), .empty):
+            return reduce(lhs:tail, rhs:.empty, initial:f(d, .zero, initial), f:f)
+        case (.list(let d, let ltail), .list(let e, let rtail)):
+            return reduce(lhs: ltail, rhs: rtail, initial:f(d, e, initial), f:f)
+        }
+    }
 }
 
-extension List: Equatable where Element == Digit {}
+extension List: Comparable, Equatable where Element == Digit {}
 
 public func ==(lhs: Binary, rhs: Binary) -> Bool {
     switch (lhs, rhs) {
@@ -75,6 +89,16 @@ public func ==(lhs: Binary, rhs: Binary) -> Bool {
         return tail == .empty
     default:
         return false
+    }
+}
+
+public func <(lhs: Binary, rhs: Binary) -> Bool {
+    return Binary.reduce(lhs: lhs, rhs: rhs, initial: false) { (a, b, r) -> Bool in
+        if a == b {
+            return r
+        } else {
+            return a == .zero
+        }
     }
 }
 

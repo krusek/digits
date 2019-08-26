@@ -66,6 +66,18 @@ final class digitsTests: XCTestCase {
             }
         }
     }
+    
+    func testInequality() {
+        let max = 30
+        for ix in 0...max {
+            for iy in (ix+1)...(max + 1) {
+                let x = Binary.build(ix)
+                let y = Binary.build(iy)
+                XCTAssertTrue(x < y)
+                XCTAssertFalse(y < x)
+            }
+        }
+    }
 
     static var allTests: [(String, () -> ())] = []
 }

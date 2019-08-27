@@ -84,6 +84,17 @@ final class digitsTests: XCTestCase {
             XCTAssertEqual(Binary.build(ix).mod5(), Binary.build(ix % 5), "\(ix) % 5 != \(ix % 5)")
         }
     }
+    
+    func testSubtraction() {
+        let max = 50
+        for ix in 0...max {
+            for iy in (ix + 1)...(max + 1) {
+                print("\(iy) = \(Binary.build(iy))")
+                print("\(ix) = \(Binary.build(ix))")
+                XCTAssertEqual(Binary.subtract(lhs: .build(iy), rhs: .build(ix)) , Binary.build(iy - ix), "\(iy) - \(ix) != \(iy-ix)")
+            }
+        }
+    }
 
     static var allTests: [(String, () -> ())] = []
 }

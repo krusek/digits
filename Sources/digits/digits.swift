@@ -60,6 +60,54 @@ extension List where Element == Digit {
         }
     }
     
+    public func mod5(_ index: Int = 0, _ accumulator: Binary = .zero) -> Binary {
+        let powers: [List<Digit>] = [
+            .build(1), // 1 % 5 = 1
+            .build(2), // 2 % 5 = 2
+            .build(4), // 4 % 5 = 4
+            .build(3)  // 8 % 5 = 3
+        ]
+        if self == .build(5) && index == 0 && accumulator == .zero { return .build(0) }
+        if self == .build(6) && index == 0 && accumulator == .zero { return .build(1) }
+        if self == .build(7) && index == 0 && accumulator == .zero { return .build(2) }
+        if self == .build(8) && index == 0 && accumulator == .zero { return .build(3) }
+        if self == .build(9) && index == 0 && accumulator == .zero { return .build(4) }
+        if self == .build(10) && index == 0 && accumulator == .zero { return .build(0) }
+        switch self {
+        case .empty where accumulator == Binary.build(5):
+            return .zero
+        case .empty where accumulator > List<Digit>.build(4):
+            return accumulator.mod5()
+        case .empty:
+            return accumulator
+        case .list(let d, let tail):
+            return tail.mod5((index + 1) % 4, accumulator + d * powers[index % 4])
+        }
+    }
+    
+    public static func subtract(lhs: Binary, rhs: Binary, carrying: Bool = false) -> Binary {
+        switch (lhs, rhs) {
+        case (.list(.one, let tail1), .list(.one, let tail2)) where carrying,
+             (.list(.zero, let tail1), .list(.zero, let tail2)) where carrying:
+            return .list(.one, subtract(lhs: tail1, rhs: tail2, carrying: true))
+        case (.list(.one, let tail1), .list(.one, let tail2)),
+             (.list(.zero, let tail1), .list(.zero, let tail2)),
+             (.list(.one, let tail1), .list(.zero, let tail2)) where carrying:
+            return .list(.zero, subtract(lhs: tail1, rhs: tail2, carrying: false))
+        case (.list(.one, let tail1), .list(.zero, let tail2)):
+            return .list(.one, subtract(lhs: tail1, rhs: tail2, carrying: false))
+        case (.list(.one, let tail), .empty) where carrying:
+            return .list(.zero, tail)
+        case (.list(.zero, let tail1), .list(.one, let tail2)):
+            return .list(carrying ? .zero : .one, subtract(lhs: tail1, rhs: tail2, carrying: true))
+        case (.list(.zero, let tail), .empty) where carrying:
+            return .list(.one, subtract(lhs: tail, rhs: .empty, carrying: true))
+        case (.list(.zero, _), .empty),
+             (.list(.one, _), .empty),
+             (.empty, _):
+            return lhs
+        }
+    }
     
     fileprivate static func reduce<Result>(lhs: Number, rhs: Number, initial: Result, f: (Digit, Digit, Result) -> Result) -> Result {
         switch (lhs, rhs) {

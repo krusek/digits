@@ -98,33 +98,14 @@ extension List where Element == Digit {
             return .list(.one, subtract(lhs: tail1, rhs: tail2, carrying: false))
         case (.list(.one, let tail), .empty) where carrying:
             return .list(.zero, tail)
-        case (.list(.zero, let tail1), .list(.one, let tail2)) where carrying:
-            return .list(.zero, subtract(lhs: tail1, rhs: tail2, carrying: true))
         case (.list(.zero, let tail1), .list(.one, let tail2)):
-            return .list(.one, subtract(lhs: tail1, rhs: tail2, carrying: true))
+            return .list(carrying ? .zero : .one, subtract(lhs: tail1, rhs: tail2, carrying: true))
         case (.list(.zero, let tail), .empty) where carrying:
             return .list(.one, subtract(lhs: tail, rhs: .empty, carrying: true))
-        case (.list(.zero, let tail), .empty):
-            return .list(.zero, tail)
-        case (.list(.one, let tail), .empty):
-            return .list(.one, tail)
-        case (.empty, _):
-            return .empty
-//        case (.list(.one, let tail1), .list(.one, let tail2)),
-//             (.list(.zero, let tail1), .list(.zero, let tail2)):
-//            return .list(.zero, subtract(lhs: tail1, rhs: tail2, carrying: carrying))
-//        case (.list(.one, let tail1), .list(.zero, let tail2)):
-//            return .list(carrying ? .zero : .one, subtract(lhs: tail1, rhs: tail2, carrying: false))
-//        case (.list(.zero, let tail1), .list(.one, let tail2)):
-//            return .list(carrying ? .zero : .one, subtract(lhs: tail1, rhs: tail2, carrying: true))
-//        case (.list(.one, let tail), .empty):
-//            return .list(carrying ? .zero : .one, tail)
-//        case (.list(.zero, let tail), .empty) where carrying:
-//            return .list(.zero, subtract(lhs: tail, rhs: .empty, carrying: true))
-//        case (.list(.zero, let tail), .empty):
-//            return .list(.zero, tail)
-//        case (.empty, _):
-//            return .zero
+        case (.list(.zero, _), .empty),
+             (.list(.one, _), .empty),
+             (.empty, _):
+            return lhs
         }
     }
     

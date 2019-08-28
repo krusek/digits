@@ -123,6 +123,41 @@ extension List where Element == Digit {
     }
 }
 
+extension List: ExpressibleByIntegerLiteral where Element == Digit {
+    public init(integerLiteral value: Int) {
+        var b = Binary.empty
+        var v = value
+        while v > 0 {
+            if v % 2 == 1 {
+                b = .list(.one, b)
+                v -= 1
+                v = v / 2
+            } else {
+                b = .list(.zero, b)
+                v = v / 2
+            }
+        }
+        let r = b.reversed()
+        self = r
+    }
+    
+    public typealias IntegerLiteralType = Int
+}
+
+extension List: AdditiveArithmetic where Element == Digit {
+    public static func += (lhs: inout List<Element>, rhs: List<Element>) {
+        lhs = lhs + rhs
+    }
+    
+    public static func -= (lhs: inout List<Element>, rhs: List<Element>) {
+        lhs = lhs - rhs
+    }
+    
+    public static func -(lhs: Binary, rhs: Binary) -> Binary {
+        return Binary.subtract(lhs: lhs, rhs: rhs)
+    }
+}
+
 extension List: Comparable, Equatable where Element == Digit {}
 
 public func ==(lhs: Binary, rhs: Binary) -> Bool {

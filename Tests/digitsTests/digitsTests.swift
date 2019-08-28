@@ -2,6 +2,7 @@ import XCTest
 import digits
 
 final class digitsTests: XCTestCase {
+    
     func testIncrement() {
         var b = List<Digit>.zero
         b = b.incremented()

@@ -4,23 +4,23 @@ import digits
 final class BinaryTests: XCTestCase {
     
     func testIncrement() {
-        var b = List<Digit>.zero
+        var b = Binary.zero
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.one))
+        XCTAssertEqual(b, Binary.build(.one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.zero, .one))
+        XCTAssertEqual(b, Binary.build(.zero, .one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.one, .one))
+        XCTAssertEqual(b, Binary.build(.one, .one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.zero, .zero, .one))
+        XCTAssertEqual(b, Binary.build(.zero, .zero, .one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.one, .zero, .one))
+        XCTAssertEqual(b, Binary.build(.one, .zero, .one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.zero, .one, .one))
+        XCTAssertEqual(b, Binary.build(.zero, .one, .one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.one, .one, .one))
+        XCTAssertEqual(b, Binary.build(.one, .one, .one))
         b = b.incremented()
-        XCTAssertEqual(b, List<Digit>.build(.zero, .zero, .zero, .one))
+        XCTAssertEqual(b, Binary.build(.zero, .zero, .zero, .one))
     }
     
     func testReversedExact() {

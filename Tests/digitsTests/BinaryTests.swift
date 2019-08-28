@@ -1,7 +1,7 @@
 import XCTest
 import digits
 
-final class digitsTests: XCTestCase {
+final class BinaryTests: XCTestCase {
     
     func testIncrement() {
         var b = List<Digit>.zero

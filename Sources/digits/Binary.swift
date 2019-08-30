@@ -23,6 +23,10 @@ extension List where Element == Digit {
         return .list(.zero, .empty)
     }
     
+    public static var one: Binary {
+        return .list(.one, .empty)
+    }
+    
     public func incremented() -> Binary {
         switch self {
         case .empty:
@@ -144,6 +148,10 @@ extension List: ExpressibleByIntegerLiteral where Element == Digit {
     public typealias IntegerLiteralType = Int
 }
 
+public enum ArithmeticError: Error {
+    case divideByZero
+}
+
 extension List: AdditiveArithmetic where Element == Digit {
     public static func += (lhs: inout List<Element>, rhs: List<Element>) {
         lhs = lhs + rhs
@@ -155,6 +163,36 @@ extension List: AdditiveArithmetic where Element == Digit {
     
     public static func -(lhs: Binary, rhs: Binary) -> Binary {
         return Binary.subtract(lhs: lhs, rhs: rhs)
+    }
+    
+    private static func partialDivide(divisor: Binary, dividend: Binary) throws -> (quotient: Binary, remainder: Binary) {
+        guard divisor != .zero else { throw ArithmeticError.divideByZero }
+        if divisor > dividend { return (quotient: .zero, remainder: dividend) }
+        if divisor == dividend { return (quotient: .one, remainder: .zero) }
+        
+        var product = divisor
+        var power = Binary.one
+        while Digit.zero + product <= dividend {
+            product = Digit.zero + product
+            power = Digit.zero + power
+        }
+        return (quotient: power, remainder: dividend - product)
+    }
+    
+    public static func integerDivide(divisor: Binary, dividend: Binary) throws -> (quotient: Binary, remainder: Binary) {
+        if divisor == .zero { throw ArithmeticError.divideByZero }
+        
+        var quotient = Binary.zero
+        var remainder = dividend
+        
+        var (power, r) = try partialDivide(divisor: divisor, dividend: remainder)
+        while power != .zero {
+            quotient += power
+            remainder = r
+            (power, r) = try partialDivide(divisor: divisor, dividend: remainder)
+        }
+        
+        return (quotient: quotient, remainder: remainder)
     }
 }
 

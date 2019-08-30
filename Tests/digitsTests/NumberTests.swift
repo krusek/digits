@@ -52,5 +52,33 @@ final class NumberTests: XCTestCase {
         }
     }
     
+    func testDividing() throws {
+        let max = 50
+        for ix in 1...max {
+            for iy in 1...(max) {
+                let q1 = try! Number.build(iy) / Number.build(ix)
+                XCTAssertEqual(q1, Number.build(iy / ix), "failure for \(iy)/\(ix)=\(iy/ix)")
+                let q2 = try! Number.build(-iy) / Number.build(ix)
+                XCTAssertEqual(q2, Number.build(-iy / ix), "failure for \(-iy)/\(ix)=\(-iy/ix)")
+                let q3 = try! Number.build(iy) / Number.build(-ix)
+                XCTAssertEqual(q3, Number.build(iy / -ix), "failure for \(iy)/\(-ix)=\(-iy/ix)")
+            }
+        }
+    }
+    
+    func testRemainder() throws {
+        let max = 50
+        for ix in 1...max {
+            for iy in 1...(max) {
+                let q1 = try! Number.build(iy) % Number.build(ix)
+                XCTAssertEqual(q1, Number.build(iy % ix), "failure for \(iy)%\(ix)=\(iy%ix)")
+                let q2 = try! Number.build(-iy) % Number.build(ix)
+                XCTAssertEqual(q2, Number.build(-iy % ix), "failure for \(-iy)%\(ix)=\(-iy%ix)")
+                let q3 = try! Number.build(iy) % Number.build(-ix)
+                XCTAssertEqual(q3, Number.build(iy % -ix), "failure for \(iy)%\(-ix)=\(iy % -ix)")
+            }
+        }
+    }
+    
     static var allTests: [(String, () -> ())] = []
 }

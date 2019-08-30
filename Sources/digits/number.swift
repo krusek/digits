@@ -130,6 +130,46 @@ extension Number {
             return .negative(binary1 * binary2)
         }
     }
+    
+    public static func /(dividend: Number, divisor: Number) throws -> Number {
+        guard divisor != .zero else { throw ArithmeticError.divideByZero }
+        guard dividend != .zero else { return .zero }
+        
+        switch (divisor, dividend) {
+        case (.zero, _):
+            throw ArithmeticError.divideByZero
+        case (_, .zero):
+            return .zero
+        case (.positive(let binary1), .positive(let binary2)),
+             (.negative(let binary1), .negative(let binary2)):
+            let (q, _) = try Binary.integerDivide(divisor: binary1, dividend: binary2)
+            return q == .zero ? .zero : .positive(q)
+        case (.positive(let binary1), .negative(let binary2)),
+             (.negative(let binary1), .positive(let binary2)):
+            let (q, _) = try Binary.integerDivide(divisor: binary1, dividend: binary2)
+            return q == .zero ? .zero : .negative(q)
+        }
+    }
+    
+    public static func %(dividend: Number, divisor: Number) throws -> Number {
+        
+        switch (divisor, dividend) {
+        case (.zero, _):
+            throw ArithmeticError.divideByZero
+        case (_, .zero):
+            return .zero
+        case (.positive(let binary1), .positive(let binary2)),
+             (.negative(let binary1), .negative(let binary2)):
+            let (_, r) = try Binary.integerDivide(divisor: binary1, dividend: binary2)
+            return r == .zero ? .zero : .positive(r)
+        case (.positive(let binary1), .negative(let binary2)):
+            let (_, r) = try Binary.integerDivide(divisor: binary1, dividend: binary2)
+            return r == .zero ? .zero : .negative(r)
+        case (.negative(let binary1), .positive(let binary2)):
+            let (_, r) = try Binary.integerDivide(divisor: binary1, dividend: binary2)
+            return r == .zero ? .zero : .positive(r)
+        }
+    }
 }
 
 extension Number: ExpressibleByIntegerLiteral {

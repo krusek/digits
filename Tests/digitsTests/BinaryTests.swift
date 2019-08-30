@@ -94,6 +94,17 @@ final class BinaryTests: XCTestCase {
             }
         }
     }
+    
+    func testDividing() throws {
+        let max = 50
+        for ix in 1...max {
+            for iy in (ix + 1)...(max+1) {
+                let (q, r) = try! Binary.integerDivide(divisor: .build(ix), dividend: .build(iy))
+                XCTAssertEqual(q, Binary.build(iy / ix))
+                XCTAssertEqual(r, Binary.build(iy % ix))
+            }
+        }
+    }
 
     static var allTests: [(String, () -> ())] = []
 }

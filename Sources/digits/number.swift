@@ -37,13 +37,17 @@ extension Number: CustomStringConvertible {
     }
     
     func base10() -> String {
+        return toString(radix: 10)
+    }
+    
+    func toString(radix: Int) -> String {
         switch self {
         case .zero:
             return "0"
         case .positive(let binary):
-            return binary.base10()
+            return binary.toString(radix: radix)
         case .negative(let binary):
-            return "-" + binary.base10()
+            return "-" + binary.toString(radix: radix)
         }
     }
 }

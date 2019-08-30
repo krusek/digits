@@ -10,22 +10,28 @@ extension List: CustomStringConvertible where Element == Digit {
     }
     
     func base10() -> String {
+        return toString(radix: 10)
+    }
+    
+    public func toString(radix: Int) -> String {
         guard self != .zero else { return "0" }
-        let ten = Binary.build(10)
+        
+        let rb = Binary.build(radix)
         var value = self
         var remainder = Binary.zero
         var r = ""
         while value != .zero {
-            (value, remainder) = try! Binary.integerDivide(divisor: ten, dividend: value)
-            r = remainder.digit() + r
+            (value, remainder) = try! Binary.integerDivide(divisor: rb, dividend: value)
+            r = remainder.digit(radix: radix) + r
         }
         return r
+        
     }
     
-    private func digit() -> String {
+    private func digit(radix: Int) -> String {
         for ix in 0..<10 {
             if self == .build(ix) {
-                return "\(ix)"
+                return String(ix, radix: radix)
             }
         }
         return ""

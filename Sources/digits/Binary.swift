@@ -185,6 +185,67 @@ extension List: AdditiveArithmetic where Element == Digit {
     public static func -(lhs: Binary, rhs: Binary) -> Binary {
         return Binary.subtract(lhs: lhs, rhs: rhs)
     }
+}
+
+extension List: Comparable, Equatable where Element == Digit {
+    public static func ==(lhs: Binary, rhs: Binary) -> Bool {
+        switch (lhs, rhs) {
+        case (.empty, .empty):
+            return true
+        case (.list(.zero, let rtail), .list(.zero, let ltail)),
+             (.list(.one, let rtail), .list(.one, let ltail)):
+            return rtail == ltail
+        case (.list(.zero, let tail), .empty),
+             (.empty, .list(.zero, let tail)):
+            return tail == .empty
+        default:
+            return false
+        }
+    }
+    
+    public static func <(lhs: Binary, rhs: Binary) -> Bool {
+        return Binary.reduce(lhs: lhs, rhs: rhs, initial: false) { (a, b, r) -> Bool in
+            if a == b {
+                return r
+            } else {
+                return a == .zero
+            }
+        }
+    }
+}
+
+
+extension List where Element == Digit {
+    public static func +(lhs: Binary, rhs: Binary) -> Binary {
+        switch (lhs, rhs) {
+        case (.empty, let tail),
+             (let tail, .empty):
+            return tail
+        case (.list(let e, let tail1), .list(.zero, let tail2)),
+             (.list(.zero, let tail1), .list(let e, let tail2)):
+            return .list(e, tail1 + tail2)
+        case (.list(.one, let tail1), .list(.one, let tail2)):
+            return .list(.zero, (tail1 + tail2).incremented())
+        }
+    }
+
+    public static func *(e: Digit, n: Binary) -> Binary {
+        switch e {
+        case .one:
+            return n
+        case .zero:
+            return .zero
+        }
+    }
+
+    public static func *(lhs: Binary, rhs: Binary) -> Binary {
+        switch (lhs, rhs) {
+        case (.empty, _), (_, .empty):
+            return .empty
+        case (.list(let d, let tail), let rhs):
+            return d * rhs + tail * rhs.shifted()
+        }
+    }
     
     private static func partialDivide(divisor: Binary, dividend: Binary) throws -> (quotient: Binary, remainder: Binary) {
         guard divisor != .zero else { throw ArithmeticError.divideByZero }
@@ -214,63 +275,5 @@ extension List: AdditiveArithmetic where Element == Digit {
         }
         
         return (quotient: quotient, remainder: remainder)
-    }
-}
-
-extension List: Comparable, Equatable where Element == Digit {}
-
-public func ==(lhs: Binary, rhs: Binary) -> Bool {
-    switch (lhs, rhs) {
-    case (.empty, .empty):
-        return true
-    case (.list(.zero, let rtail), .list(.zero, let ltail)),
-         (.list(.one, let rtail), .list(.one, let ltail)):
-        return rtail == ltail
-    case (.list(.zero, let tail), .empty),
-         (.empty, .list(.zero, let tail)):
-        return tail == .empty
-    default:
-        return false
-    }
-}
-
-public func <(lhs: Binary, rhs: Binary) -> Bool {
-    return Binary.reduce(lhs: lhs, rhs: rhs, initial: false) { (a, b, r) -> Bool in
-        if a == b {
-            return r
-        } else {
-            return a == .zero
-        }
-    }
-}
-
-public func +(lhs: Binary, rhs: Binary) -> Binary {
-    switch (lhs, rhs) {
-    case (.empty, let tail),
-         (let tail, .empty):
-        return tail
-    case (.list(let e, let tail1), .list(.zero, let tail2)),
-         (.list(.zero, let tail1), .list(let e, let tail2)):
-        return .list(e, tail1 + tail2)
-    case (.list(.one, let tail1), .list(.one, let tail2)):
-        return .list(.zero, (tail1 + tail2).incremented())
-    }
-}
-
-public func *(e: Digit, n: Binary) -> Binary {
-    switch e {
-    case .one:
-        return n
-    case .zero:
-        return .zero
-    }
-}
-
-public func *(lhs: Binary, rhs: Binary) -> Binary {
-    switch (lhs, rhs) {
-    case (.empty, _), (_, .empty):
-        return .empty
-    case (.list(let d, let tail), let rhs):
-        return d * rhs + tail * rhs.shifted()
     }
 }

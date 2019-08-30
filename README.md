@@ -21,7 +21,7 @@ public enum Number {
 }
 ```
 
-`Number` represents an arbitrary precision signed integer. It supports addition, subtraction, and multiplications.
+`Number` represents an arbitrary precision signed integer. It supports addition, subtraction, multiplications, division, and modulus.
 
 # Inspiration
 

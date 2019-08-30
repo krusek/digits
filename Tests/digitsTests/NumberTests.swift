@@ -80,5 +80,12 @@ final class NumberTests: XCTestCase {
         }
     }
     
+    func testBase10() {
+        for ix in -100...100 {
+            XCTAssertEqual(Number.build(ix).description, "\(ix)", "\(ix) != \(ix)")
+        }
+        
+    }
+    
     static var allTests: [(String, () -> ())] = []
 }

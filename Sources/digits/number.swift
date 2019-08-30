@@ -33,13 +33,17 @@ public enum Number {
 
 extension Number: CustomStringConvertible {
     public var description: String {
+        return self.base10()
+    }
+    
+    func base10() -> String {
         switch self {
         case .zero:
             return "0"
         case .positive(let binary):
-            return binary.description
+            return binary.base10()
         case .negative(let binary):
-            return "-\(binary)"
+            return "-" + binary.base10()
         }
     }
 }
@@ -152,7 +156,6 @@ extension Number {
     }
     
     public static func %(dividend: Number, divisor: Number) throws -> Number {
-        
         switch (divisor, dividend) {
         case (.zero, _):
             throw ArithmeticError.divideByZero

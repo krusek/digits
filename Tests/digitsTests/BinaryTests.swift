@@ -86,6 +86,13 @@ final class BinaryTests: XCTestCase {
         }
     }
     
+    func testBase10() {
+        for ix in 0...1000 {
+            XCTAssertEqual(Binary.build(ix).description, "\(ix)", "\(ix) != \(ix)")
+        }
+        
+    }
+    
     func testSubtraction() {
         let max = 50
         for ix in 0...max {

@@ -6,14 +6,29 @@ public enum Digit {
 
 extension List: CustomStringConvertible where Element == Digit {
     public var description: String {
-        switch self {
-        case .empty:
-            return ""
-        case .list(.one, let tail):
-            return "1" + tail.description
-        case .list(.zero, let tail):
-            return "0" + tail.description
+        return base10()
+    }
+    
+    func base10() -> String {
+        guard self != .zero else { return "0" }
+        let ten = Binary.build(10)
+        var value = self
+        var remainder = Binary.zero
+        var r = ""
+        while value != .zero {
+            (value, remainder) = try! Binary.integerDivide(divisor: ten, dividend: value)
+            r = remainder.digit() + r
         }
+        return r
+    }
+    
+    private func digit() -> String {
+        for ix in 0..<10 {
+            if self == .build(ix) {
+                return "\(ix)"
+            }
+        }
+        return ""
     }
 }
 

@@ -146,6 +146,25 @@ extension List where Element == Digit {
             return reduce(lhs: ltail, rhs: rtail, initial:f(d, e, initial), f:f)
         }
     }
+    
+    public func pow(_ power: Binary) -> Binary {
+        var base = self
+        var p = power
+        var value: Binary = .one
+        while p != .zero {
+            switch p {
+            case .empty:
+                return value
+            case .list(.one, let tail):
+                value = value * base
+                fallthrough
+            case .list(.zero, let tail):
+                p = tail
+                base = base * base
+            }
+        }
+        return value
+    }
 }
 
 extension List: ExpressibleByIntegerLiteral where Element == Digit {

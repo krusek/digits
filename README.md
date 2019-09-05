@@ -9,7 +9,7 @@ It contains two main enumerations: `Binary` and `Number`.
 # `Binary`
 
 `Binary` is just a `typealias`. It is a linked list whose elements are ones and zeros. 
-It essentially represents an arbitrary precision unsigned integer. It supports addition, multiplication, and subtraction (when the result is positive). It also supports comparisons.
+It essentially represents an arbitrary precision unsigned integer. It supports addition, multiplication, subtraction (when the result is positive), and powers. It also supports comparisons.
 
 # `Number`
 

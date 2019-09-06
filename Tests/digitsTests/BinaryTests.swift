@@ -40,8 +40,8 @@ final class BinaryTests: XCTestCase {
         XCTAssertEqual(b.reversed(), reversedPadded)
         XCTAssertEqual(bPadded.reversed(), reversedPadded)
     }
-    
-    func testBuildInteger() {
+
+    func testOldBuildInteger() {
         var b = Binary.zero
         for ix in 0...100 {
             XCTAssertEqual(b, Binary.build(ix), "bad build for: \(ix)")
@@ -49,12 +49,30 @@ final class BinaryTests: XCTestCase {
             b = b.incremented()
         }
     }
-    
-    func testAddition() {
+
+    func testBuildInteger() {
+        var b: BinaryInteger = .zero
+        for ix in 0...100 {
+            XCTAssertEqual(b, BinaryInteger.build(ix), "bad build for: \(ix)")
+            XCTAssertEqual(b.description, BinaryInteger.build(ix).description, "bad description for: \(ix)")
+            b = b.incremented()
+        }
+    }
+
+    func testOldAddition() {
         for ix in 0...20 {
             for iy in 0...20 {
                 let sum = Binary.build(ix) + Binary.build(iy)
                 XCTAssertEqual(sum, Binary.build(ix + iy), "\(ix) + \(iy) != \(sum)")
+            }
+        }
+    }
+
+    func testAddition() {
+        for ix in 0...20 {
+            for iy in 0...20 {
+                let sum = BinaryInteger.build(ix) + BinaryInteger.build(iy)
+                XCTAssertEqual(sum, BinaryInteger.build(ix + iy), "\(ix) + \(iy) != \(sum)")
             }
         }
     }

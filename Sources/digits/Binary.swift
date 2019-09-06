@@ -1,7 +1,31 @@
 public typealias Binary = List<Digit, Void>
 
+public indirect enum BinaryInteger {
+    case list(Digit, BinaryInteger), empty(Sign)
+}
+
 public enum Digit {
     case zero, one
+}
+
+public enum Sign {
+    case positive, negative
+}
+
+extension BinaryInteger: CustomStringConvertible {
+    public var description: String {
+        if self.isZero { return "0..." }
+        switch self {
+        case .list(.zero, let tail):
+            return "0" + tail.description
+        case .list(.one, let tail):
+            return "1" + tail.description
+        case .empty(.positive):
+            return "0..."
+        case .empty(.negative):
+            return "1..."
+        }
+    }
 }
 
 extension List: CustomStringConvertible where Element == Digit, Empty == Void {
@@ -38,6 +62,94 @@ extension List: CustomStringConvertible where Element == Digit, Empty == Void {
     }
 }
 
+extension BinaryInteger {
+    public static var zero: BinaryInteger {
+        return .list(.zero, .empty(.positive))
+    }
+
+    public var isZero: Bool {
+        return self.isZeros || self.isOnes
+    }
+
+    private var isOnes: Bool {
+        switch self {
+        case .list(.zero, _):
+            return false
+        case .list(.one, let tail):
+            return tail.isOnes
+        case .empty(let sign):
+            return sign == .negative
+        }
+    }
+
+    private var isZeros: Bool {
+        switch self {
+        case .list(.one, _):
+            return false
+        case .list(.zero, let tail):
+            return tail.isZeros
+        case .empty(let sign):
+            return sign == .positive
+        }
+    }
+
+    public static var one: BinaryInteger {
+        return .list(.one, .empty(.positive))
+    }
+
+    public func incremented() -> BinaryInteger {
+        switch self {
+        case .list(.zero, let list):
+            return .list(.one, list)
+        case .list(.one, let list):
+            return .list(.zero, list.incremented())
+        case .empty(.positive):
+            return .list(.one, .empty(.positive))
+        case .empty(.negative):
+            return .list(.zero, .empty(.positive))
+        }
+    }
+
+    public static func build(_ value: Int) -> BinaryInteger {
+        var b = BinaryInteger.empty(.positive)
+        var v = value
+        while v > 0 {
+            if v % 2 == 1 {
+                b = .list(.one, b)
+                v -= 1
+                v = v / 2
+            } else {
+                b = .list(.zero, b)
+                v = v / 2
+            }
+        }
+        let r = b.reversed()
+        return r
+    }
+
+    private func reversed() -> BinaryInteger {
+        switch self {
+        case .list(let d, let tail):
+            return tail.reversed() + d
+        default:
+            return self
+        }
+    }
+
+
+    public static func +(lhs: BinaryInteger, rhs: Digit) -> BinaryInteger {
+        switch lhs {
+        case .list(let d, let tail):
+            return .list(d, tail + rhs)
+        case .empty(_):
+            return .list(rhs, lhs)
+        }
+    }
+
+    public static func +(lhs: Digit, rhs: BinaryInteger) -> BinaryInteger {
+        return .list(lhs, rhs)
+    }
+}
 
 extension List where Element == Digit, Empty == Void {
     public static var zero: Binary {
@@ -198,6 +310,37 @@ extension List: AdditiveArithmetic where Element == Digit, Empty == Void {
     }
 }
 
+extension BinaryInteger: Equatable {
+    public static func ==(lhs: BinaryInteger, rhs: BinaryInteger) -> Bool {
+        switch (lhs.isZero, rhs.isZero) {
+        case (true, true):
+            return true
+        case (false, false):
+            return listEquality(lhs: lhs, rhs: rhs)
+        default:
+            return false
+        }
+    }
+
+    private static func listEquality(lhs: BinaryInteger, rhs:BinaryInteger) -> Bool {
+        switch (lhs, rhs) {
+        case (.empty, .empty):
+            return true
+        case (.list(.zero, let rtail), .list(.zero, let ltail)),
+             (.list(.one, let rtail), .list(.one, let ltail)):
+            return rtail == ltail
+        case (.list(.zero, let tail), .empty(.positive)),
+             (.empty(.positive), .list(.zero, let tail)):
+            return tail == .empty(.positive)
+        case (.list(.one, let tail), .empty(.negative)),
+             (.empty(.negative), .list(.one, let tail)):
+            return tail == .empty(.negative)
+        default:
+            return false
+        }
+    }
+}
+
 extension List: Comparable, Equatable where Element == Digit, Empty == Void {
     public static func ==(lhs: Binary, rhs: Binary) -> Bool {
         switch (lhs, rhs) {
@@ -225,6 +368,23 @@ extension List: Comparable, Equatable where Element == Digit, Empty == Void {
     }
 }
 
+extension BinaryInteger {
+    public static func +(lhs: BinaryInteger, rhs: BinaryInteger) -> BinaryInteger {
+        switch (lhs, rhs) {
+        case (.empty(.positive), let tail),
+             (let tail, .empty(.positive)):
+            return tail
+        case (.empty(.negative), let tail),
+             (let tail, .empty(.negative)):
+            return .list(.one, .empty(.negative)) + tail
+        case (.list(let e, let tail1), .list(.zero, let tail2)),
+             (.list(.zero, let tail1), .list(let e, let tail2)):
+            return .list(e, tail1 + tail2)
+        case (.list(.one, let tail1), .list(.one, let tail2)):
+            return .list(.zero, (tail1 + tail2).incremented())
+        }
+    }
+}
 
 extension List where Element == Digit, Empty == Void {
     public static func +(lhs: Binary, rhs: Binary) -> Binary {

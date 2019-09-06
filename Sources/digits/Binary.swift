@@ -385,7 +385,15 @@ extension List: Comparable, Equatable where Element == Digit, Empty == Void {
     }
 }
 
-extension BinaryInteger {
+extension BinaryInteger: AdditiveArithmetic {
+    public static func += (lhs: inout BinaryInteger, rhs: BinaryInteger) {
+        lhs = lhs + rhs
+    }
+
+    public static func -= (lhs: inout BinaryInteger, rhs: BinaryInteger) {
+        lhs = lhs - rhs
+    }
+
     private var sign: Sign {
         switch self {
         case .empty(let sign):

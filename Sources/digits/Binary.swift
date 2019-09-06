@@ -110,9 +110,22 @@ extension BinaryInteger {
         }
     }
 
+    public func decremented() -> BinaryInteger {
+        switch self {
+        case .list(.one, let list):
+            return .list(.zero, list)
+        case .list(.zero, let list):
+            return .list(.one, list.decremented())
+        case .empty(.positive):
+            return .empty(.negative)
+        case .empty(.negative):
+            return .list(.zero, .empty(.negative))
+        }
+    }
+
     public static func build(_ value: Int) -> BinaryInteger {
         var b = BinaryInteger.empty(.positive)
-        var v = value
+        var v = abs(value)
         while v > 0 {
             if v % 2 == 1 {
                 b = .list(.one, b)
@@ -124,7 +137,11 @@ extension BinaryInteger {
             }
         }
         let r = b.reversed()
-        return r
+        if value < 0 {
+            return ~r + .one
+        } else {
+            return r
+        }
     }
 
     private func reversed() -> BinaryInteger {
@@ -369,11 +386,39 @@ extension List: Comparable, Equatable where Element == Digit, Empty == Void {
 }
 
 extension BinaryInteger {
+    private var sign: Sign {
+        switch self {
+        case .empty(let sign):
+            return sign
+        case .list(_, let tail):
+            return tail.sign
+        }
+    }
+
+    public static prefix func ~(lhs: BinaryInteger) -> BinaryInteger {
+        switch lhs {
+        case .empty(.positive):
+            return .empty(.negative)
+        case .empty(.negative):
+            return .empty(.positive)
+        case .list(.one, let tail):
+            return .list(.zero, ~tail)
+        case .list(.zero, let tail):
+            return .list(.one, ~tail)
+        }
+    }
+
+    public static func -(lhs: BinaryInteger, rhs: BinaryInteger) -> BinaryInteger {
+        return lhs + ~rhs + .one
+    }
+
     public static func +(lhs: BinaryInteger, rhs: BinaryInteger) -> BinaryInteger {
         switch (lhs, rhs) {
         case (.empty(.positive), let tail),
              (let tail, .empty(.positive)):
             return tail
+        case (.empty(.negative), .empty(.negative)):
+            return .list(.zero, .empty(.negative))
         case (.empty(.negative), let tail),
              (let tail, .empty(.negative)):
             return .list(.one, .empty(.negative)) + tail

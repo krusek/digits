@@ -1,35 +1,34 @@
 
-public indirect enum List<Element> {
-    case empty, list(Element, List<Element>)
+public indirect enum List<Element, Empty> {
+    case empty(Empty), list(Element, List<Element, Empty>)
     
-    public static func build(_ elements: Element...) -> List<Element> {
-        var l = List<Element>.empty
+    public static func build(_ elements: Element...) -> List<Element, Void> {
+        var l = List<Element, Void>.empty(())
         for e in elements.reversed() {
             l = e + l
         }
         return l
     }
     
-    public func reversed() -> List<Element> {
+    public func reversed() -> List<Element, Empty> {
         switch self {
-        case .empty,
-             .list(_, .empty):
-            return self
         case .list(let d, let tail):
             return tail.reversed() + d
+        default:
+            return self
         }
     }
 }
 
-public func +<Element>(lhs: List<Element>, rhs: Element) -> List<Element> {
+public func +<Element, Empty>(lhs: List<Element, Empty>, rhs: Element) -> List<Element, Empty> {
     switch lhs {
-    case .empty:
-        return .list(rhs, .empty)
     case .list(let d, let tail):
         return .list(d, tail + rhs)
+    case .empty(_):
+        return .list(rhs, lhs)
     }
 }
 
-public func +<Element>(lhs: Element, rhs: List<Element>) -> List<Element> {
+public func +<Element, Empty>(lhs: Element, rhs: List<Element, Empty>) -> List<Element, Empty> {
     return .list(lhs, rhs)
 }

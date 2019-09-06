@@ -42,7 +42,7 @@ final class BinaryTests: XCTestCase {
     }
     
     func testBuildInteger() {
-        var b = Binary.empty
+        var b = Binary.zero
         for ix in 0...100 {
             XCTAssertEqual(b, Binary.build(ix), "bad build for: \(ix)")
             XCTAssertEqual(b.description, Binary.build(ix).description, "bad description for: \(ix)")
@@ -97,7 +97,7 @@ final class BinaryTests: XCTestCase {
         let max = 50
         for ix in 0...max {
             for iy in (ix + 1)...(max + 1) {
-                XCTAssertEqual(Binary.subtract(lhs: .build(iy), rhs: .build(ix)) , Binary.build(iy - ix), "\(iy) - \(ix) != \(iy-ix)")
+                XCTAssertEqual(Binary.build(iy) - Binary.build(ix), Binary.build(iy - ix), "\(iy) - \(ix) != \(iy-ix)")
             }
         }
     }

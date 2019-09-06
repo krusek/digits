@@ -115,12 +115,21 @@ final class BinaryTests: XCTestCase {
         }
         
     }
-    
-    func testSubtraction() {
+
+    func testOldSubtraction() {
         let max = 50
         for ix in 0...max {
             for iy in (ix + 1)...(max + 1) {
                 XCTAssertEqual(Binary.build(iy) - Binary.build(ix), Binary.build(iy - ix), "\(iy) - \(ix) != \(iy-ix)")
+            }
+        }
+    }
+
+    func testSubtraction() {
+        let max = 50
+        for ix in 0...max {
+            for iy in (ix + 1)...(max + 1) {
+                XCTAssertEqual(BinaryInteger.build(iy) - BinaryInteger.build(ix), BinaryInteger.build(iy - ix), "\(iy) - \(ix) != \(iy-ix)")
             }
         }
     }

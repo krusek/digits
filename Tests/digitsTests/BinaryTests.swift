@@ -81,12 +81,22 @@ final class BinaryTests: XCTestCase {
             }
         }
     }
-    
-    func testMultiplication() {
+
+    func testOldMultiplication() {
         for ix in 0...20 {
             for iy in 0...20 {
                 let product = Binary.build(ix) * Binary.build(iy)
                 XCTAssertEqual(product, Binary.build(ix * iy), "\(ix) * \(iy) != \(product)")
+            }
+        }
+    }
+
+    func testMultiplication() {
+        let max = 5
+        for ix in -max...max {
+            for iy in -max...max {
+                let product = BinaryInteger.build(ix) * BinaryInteger.build(iy)
+                XCTAssertEqual(product, BinaryInteger.build(ix * iy), "\(ix) * \(iy) != \(product)")
             }
         }
     }

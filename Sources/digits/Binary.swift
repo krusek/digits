@@ -439,6 +439,47 @@ extension BinaryInteger: AdditiveArithmetic {
     }
 }
 
+extension BinaryInteger {
+    public static func *(e: Digit, n: BinaryInteger) -> BinaryInteger {
+        switch e {
+        case .one:
+            return n
+        case .zero:
+            return .zero
+        }
+    }
+
+    private func shifted() -> BinaryInteger {
+        return .list(.zero, self)
+    }
+
+    private func negated() -> BinaryInteger {
+        return ~self + .one
+    }
+
+    public static func *(lhs: BinaryInteger, rhs: BinaryInteger) -> BinaryInteger {
+        let lsign = lhs.sign
+        let rsign = rhs.sign
+
+        let labs = (lsign == .positive) ? lhs : lhs.negated()
+        let rabs = (rsign == .positive) ? rhs : rhs.negated()
+
+        let fsign: Sign = lsign == rsign ? .positive : .negative
+
+        let mabs = positiveMultiply(lhs: labs, rhs: rabs)
+        return (fsign == .positive) ? mabs : mabs.negated()
+    }
+
+    private static func positiveMultiply(lhs: BinaryInteger, rhs: BinaryInteger) -> BinaryInteger {
+        switch (lhs, rhs) {
+        case (.empty(_), _), (_, .empty(_)):
+            return .empty(.positive)
+        case (.list(let d, let tail), let rhs):
+            return d * rhs + tail * rhs.shifted()
+        }
+    }
+}
+
 extension List where Element == Digit, Empty == Void {
     public static func +(lhs: Binary, rhs: Binary) -> Binary {
         switch (lhs, rhs) {

@@ -10,6 +10,15 @@ public enum Digit {
 
 public enum Sign {
     case positive, negative
+
+    fileprivate var digit: Digit {
+        switch self {
+        case .positive:
+            return .zero
+        case .negative:
+            return .one
+        }
+    }
 }
 
 extension BinaryInteger: CustomStringConvertible {
@@ -64,11 +73,11 @@ extension List: CustomStringConvertible where Element == Digit, Empty == Void {
 
 extension BinaryInteger {
     public static var zero: BinaryInteger {
-        return .list(.zero, .empty(.positive))
+        return .empty(.positive)
     }
 
     public var isZero: Bool {
-        return self.isZeros || self.isOnes
+        return self.isZeros
     }
 
     private var isOnes: Bool {
@@ -138,9 +147,22 @@ extension BinaryInteger {
         }
         let r = b.reversed()
         if value < 0 {
-            return ~r + .one
+            return (~r + .one).trim()
         } else {
             return r
+        }
+    }
+
+    private func trim() -> BinaryInteger {
+        switch self {
+        case .list(.one, .empty(.negative)):
+            return .empty(.negative);
+        case .list(.zero, .empty(.positive)):
+            return .empty(.positive)
+        case .list(let d, let tail):
+            return .list(d, tail.trim())
+        case .empty(_):
+            return self
         }
     }
 
@@ -327,7 +349,8 @@ extension List: AdditiveArithmetic where Element == Digit, Empty == Void {
     }
 }
 
-extension BinaryInteger: Equatable {
+extension BinaryInteger: Equatable, Comparable {
+
     public static func ==(lhs: BinaryInteger, rhs: BinaryInteger) -> Bool {
         switch (lhs.isZero, rhs.isZero) {
         case (true, true):
@@ -354,6 +377,44 @@ extension BinaryInteger: Equatable {
             return tail == .empty(.negative)
         default:
             return false
+        }
+    }
+
+    public static func < (lhs: BinaryInteger, rhs: BinaryInteger) -> Bool {
+        guard !lhs.isZero || !rhs.isZero else { return false }
+
+        let lsign = lhs.sign
+        let rsign = rhs.sign
+
+        print("\(lsign), \(rsign)")
+        if lsign != rsign {
+            return lsign == .negative
+        }
+
+        let labs = lsign == .positive ? lhs : lhs.negated()
+        let rabs = rsign == .positive ? rhs : rhs.negated()
+
+        let temp = BinaryInteger.reduce(lhs: labs, rhs: rabs, initial: false) { (a, b, r) -> Bool in
+            if a == b {
+                return r
+            } else {
+                return a == .zero
+            }
+        }
+        return lsign == .positive ? temp : !temp
+    }
+
+
+    fileprivate static func reduce<Result>(lhs: BinaryInteger, rhs: BinaryInteger, initial: Result, f: (Digit, Digit, Result) -> Result) -> Result {
+        switch (lhs, rhs) {
+        case (.empty(let value1), .empty(let value2)):
+            return f(value1.digit, value2.digit, initial)
+        case (.empty(let sign), .list(let d, let tail)):
+            return reduce(lhs:lhs, rhs:tail, initial:f(sign.digit, d, initial), f:f)
+        case (.list(let d, let tail), .empty(let sign)):
+            return reduce(lhs:tail, rhs:rhs, initial:f(d, sign.digit, initial), f:f)
+        case (.list(let d, let ltail), .list(let e, let rtail)):
+            return reduce(lhs: ltail, rhs: rtail, initial:f(d, e, initial), f:f)
         }
     }
 }

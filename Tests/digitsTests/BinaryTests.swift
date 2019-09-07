@@ -57,7 +57,7 @@ final class BinaryTests: XCTestCase {
             XCTAssertEqual(p, BinaryInteger.build(ix), "bad build for: \(ix)")
             XCTAssertEqual(p.description, BinaryInteger.build(ix).description, "bad description for: \(ix)")
             XCTAssertEqual(n, BinaryInteger.build(-ix), "bad build for: \(-ix)")
-            XCTAssertEqual(n.description, BinaryInteger.build(-ix).description, "bad description for: \(ix)")
+            XCTAssertEqual(n.description, BinaryInteger.build(-ix).description, "bad description for: \(-ix)")
             p = p.incremented()
             n = n.decremented()
         }
@@ -100,8 +100,8 @@ final class BinaryTests: XCTestCase {
             }
         }
     }
-    
-    func testInequality() {
+
+    func testOldInequality() {
         let max = 30
         for ix in 0...max {
             for iy in (ix+1)...(max + 1) {
@@ -109,6 +109,18 @@ final class BinaryTests: XCTestCase {
                 let y = Binary.build(iy)
                 XCTAssertTrue(x < y)
                 XCTAssertFalse(y < x)
+            }
+        }
+    }
+
+    func testInequality() {
+        let max = 20
+        for ix in -max...max {
+            for iy in (ix+1)...(max + 1) {
+                let x = BinaryInteger.build(ix)
+                let y = BinaryInteger.build(iy)
+                XCTAssertTrue(x < y, "\(ix) >= \(iy)")
+                XCTAssertFalse(y < x, "\(iy) < \(ix)")
             }
         }
     }

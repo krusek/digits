@@ -4,24 +4,13 @@ This package performs arbitrary precision integer arithmetic. It is a functional
 Most of the methods are recursive methods 
 with just a single `switch` statement. 
 
-It contains two main enumerations: `Binary` and `Number`.
+It contains one main enumeration: `BinaryInteger`.
 
-# `Binary`
+# `BinaryInteger`
 
-`Binary` is just a `typealias`. It is a linked list whose elements are ones and zeros. 
-It essentially represents an arbitrary precision unsigned integer. It supports addition, multiplication, subtraction (when the result is positive), and powers. It also supports comparisons.
-
-# `Number`
-
-`Number` is an enum with three cases:  `positive` ,  `negative`, and `zero`. It looks like this:
-
-```Swift
-public enum Number {
-  case positive(Binary), negative(Binary), zero
-}
-```
-
-`Number` represents an arbitrary precision signed integer. It supports addition, subtraction, multiplications, division, and modulus.
+`Binary` is just a linked list. It is a linked list whose elements are ones and zeros and the tail is either `.empty(.postive)` or `.empty(.negative)`.
+The `positive` one indicates an infinite stream of zeros whereas the `negative` one indicates an infinite stream of ones.
+It represents an arbitrary precision integer. It supports positive powers, addition, subtraction, multiplications, division, and modulus.
 
 # Inspiration
 

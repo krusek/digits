@@ -540,6 +540,74 @@ extension BinaryInteger {
         }
     }
 
+    public static func /(dividend: BinaryInteger, divisor: BinaryInteger) throws -> BinaryInteger {
+        guard divisor != .zero else { throw ArithmeticError.divideByZero }
+        guard dividend != .zero else { return .zero }
+
+        let q: BinaryInteger
+        switch (divisor.sign, dividend.sign) {
+        case (.positive, .positive):
+            (q, _) = try BinaryInteger.positiveIntegerDivide(divisor: divisor, dividend: dividend)
+            return q
+        case (.negative, .negative):
+            (q, _) = try BinaryInteger.positiveIntegerDivide(divisor: divisor.negated(), dividend: dividend.negated())
+            return q
+        case (.positive, .negative):
+            (q, _) = try BinaryInteger.positiveIntegerDivide(divisor: divisor, dividend: dividend.negated())
+            return q.negated()
+        case (.negative, .positive):
+            (q, _) = try BinaryInteger.positiveIntegerDivide(divisor: divisor.negated(), dividend: dividend)
+            return q.negated()
+        }
+    }
+
+    public static func %(dividend: BinaryInteger, divisor: BinaryInteger) throws -> BinaryInteger {
+        switch (divisor.sign, dividend.sign) {
+        case (.positive, .positive):
+            let (_, r) = try BinaryInteger.positiveIntegerDivide(divisor: divisor, dividend: dividend)
+            return r
+        case (.negative, .negative):
+            let (_, r) = try BinaryInteger.positiveIntegerDivide(divisor: divisor.negated(), dividend: dividend.negated())
+            return r
+        case (.positive, .negative):
+            let (_, r) = try BinaryInteger.positiveIntegerDivide(divisor: divisor, dividend: dividend.negated())
+            return r.negated()
+        case (.negative, .positive):
+            let (_, r) = try BinaryInteger.positiveIntegerDivide(divisor: divisor.negated(), dividend: dividend)
+            return r
+        }
+    }
+
+    private static func partialDivide(divisor: BinaryInteger, dividend: BinaryInteger) throws -> (quotient: BinaryInteger, remainder: BinaryInteger) {
+        guard divisor != .zero else { throw ArithmeticError.divideByZero }
+        if divisor > dividend { return (quotient: .zero, remainder: dividend) }
+        if divisor == dividend { return (quotient: .one, remainder: .zero) }
+
+        var product = divisor
+        var power = BinaryInteger.one
+        while Digit.zero + product <= dividend {
+            product = Digit.zero + product
+            power = Digit.zero + power
+        }
+        return (quotient: power, remainder: dividend - product)
+    }
+
+    public static func positiveIntegerDivide(divisor: BinaryInteger, dividend: BinaryInteger) throws -> (quotient: BinaryInteger, remainder: BinaryInteger) {
+        if divisor == .zero { throw ArithmeticError.divideByZero }
+
+        var quotient = BinaryInteger.zero
+        var remainder = dividend
+
+        var (power, r) = try partialDivide(divisor: divisor, dividend: remainder)
+        while power != .zero {
+            quotient += power
+            remainder = r
+            (power, r) = try partialDivide(divisor: divisor, dividend: remainder)
+        }
+
+        return (quotient: quotient, remainder: remainder)
+    }
+
     public func pow(_ power: BinaryInteger, partial: BinaryInteger = .one) -> BinaryInteger {
         switch power {
         case .empty:

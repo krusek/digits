@@ -181,14 +181,53 @@ final class BinaryTests: XCTestCase {
         let power = BinaryInteger.build(2).pow(BinaryInteger.build(135))
         XCTAssertEqual(power.description, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010...")
     }
-    
-    func testDividing() throws {
+
+    func testOldDividing() throws {
         let max = 50
         for ix in 1...max {
             for iy in (ix + 1)...(max+1) {
                 let (q, r) = try! Binary.integerDivide(divisor: .build(ix), dividend: .build(iy))
                 XCTAssertEqual(q, Binary.build(iy / ix))
                 XCTAssertEqual(r, Binary.build(iy % ix))
+            }
+        }
+    }
+
+    func testIntegerDividing() throws {
+        let max = 50
+        for ix in 1...max {
+            for iy in (ix + 1)...(max+1) {
+                let (q, r) = try! BinaryInteger.positiveIntegerDivide(divisor: .build(ix), dividend: .build(iy))
+                XCTAssertEqual(q, BinaryInteger.build(iy / ix))
+                XCTAssertEqual(r, BinaryInteger.build(iy % ix))
+            }
+        }
+    }
+
+    func testDividing() throws {
+        let max = 50
+        for ix in 1...max {
+            for iy in 1...(max) {
+                let q1 = try! BinaryInteger.build(iy) / BinaryInteger.build(ix)
+                XCTAssertEqual(q1, BinaryInteger.build(iy / ix), "failure for \(iy)/\(ix)=\(iy/ix)")
+                let q2 = try! BinaryInteger.build(-iy) / BinaryInteger.build(ix)
+                XCTAssertEqual(q2, BinaryInteger.build(-iy / ix), "failure for \(-iy)/\(ix)=\(-iy/ix)")
+                let q3 = try! BinaryInteger.build(iy) / BinaryInteger.build(-ix)
+                XCTAssertEqual(q3, BinaryInteger.build(iy / -ix), "failure for \(iy)/\(-ix)=\(-iy/ix)")
+            }
+        }
+    }
+
+    func testRemainder() throws {
+        let max = 50
+        for ix in 1...max {
+            for iy in 1...(max) {
+                let q1 = try! BinaryInteger.build(iy) % BinaryInteger.build(ix)
+                XCTAssertEqual(q1, BinaryInteger.build(iy % ix), "failure for \(iy)%\(ix)=\(iy%ix)")
+                let q2 = try! BinaryInteger.build(-iy) % BinaryInteger.build(ix)
+                XCTAssertEqual(q2, BinaryInteger.build(-iy % ix), "failure for \(-iy)%\(ix)=\(-iy%ix)")
+                let q3 = try! BinaryInteger.build(iy) % BinaryInteger.build(-ix)
+                XCTAssertEqual(q3, BinaryInteger.build(iy % -ix), "failure for \(iy)%\(-ix)=\(iy % -ix)")
             }
         }
     }

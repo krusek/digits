@@ -92,7 +92,7 @@ final class BinaryTests: XCTestCase {
     }
 
     func testMultiplication() {
-        let max = 5
+        let max = 20
         for ix in -max...max {
             for iy in -max...max {
                 let product = BinaryInteger.build(ix) * BinaryInteger.build(iy)

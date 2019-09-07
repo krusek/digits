@@ -130,12 +130,19 @@ final class BinaryTests: XCTestCase {
             XCTAssertEqual(Binary.build(ix).mod5(), Binary.build(ix % 5), "\(ix) % 5 != \(ix % 5)")
         }
     }
-    
-    func testBase10() {
+
+    func testOldBase10() {
         for ix in 0...1000 {
             XCTAssertEqual(Binary.build(ix).description, "\(ix)", "\(ix) != \(ix)")
         }
-        
+
+    }
+
+    func testBase10() {
+        for ix in -1000...1000 {
+            XCTAssertEqual(BinaryInteger.build(ix).description, "\(ix)", "\(ix) != \(ix)")
+        }
+
     }
 
     func testOldSubtraction() {
@@ -179,7 +186,7 @@ final class BinaryTests: XCTestCase {
         }
 
         let power = BinaryInteger.build(2).pow(BinaryInteger.build(135))
-        XCTAssertEqual(power.description, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010...")
+        XCTAssertEqual(power.description, "43556142965880123323311949751266331066368")
     }
 
     func testOldDividing() throws {

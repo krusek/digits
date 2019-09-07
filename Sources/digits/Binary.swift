@@ -23,17 +23,33 @@ public enum Sign {
 
 extension BinaryInteger: CustomStringConvertible {
     public var description: String {
-        if self.isZero { return "0..." }
-        switch self {
-        case .list(.zero, let tail):
-            return "0" + tail.description
-        case .list(.one, let tail):
-            return "1" + tail.description
-        case .empty(.positive):
-            return "0..."
-        case .empty(.negative):
-            return "1..."
+        return self.toString(radix: 10)
+    }
+
+    public func toString(radix: Int) -> String {
+        guard self != .zero else { return "0" }
+        guard self > .zero else {
+            return "-\(self.negated())"
         }
+
+        let rb = BinaryInteger.build(radix)
+        var value = self
+        var remainder = BinaryInteger.zero
+        var r = ""
+        while value != .zero {
+            (value, remainder) = try! BinaryInteger.positiveIntegerDivide(divisor: rb, dividend: value)
+            r = remainder.digit(radix: radix) + r
+        }
+        return r
+    }
+
+    private func digit(radix: Int) -> String {
+        for ix in 0..<10 {
+            if self == .build(ix) {
+                return String(ix, radix: radix)
+            }
+        }
+        return ""
     }
 }
 
@@ -58,7 +74,6 @@ extension List: CustomStringConvertible where Element == Digit, Empty == Void {
             r = remainder.digit(radix: radix) + r
         }
         return r
-        
     }
     
     private func digit(radix: Int) -> String {

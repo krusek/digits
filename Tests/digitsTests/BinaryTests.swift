@@ -155,8 +155,8 @@ final class BinaryTests: XCTestCase {
             }
         }
     }
-    
-    func testPower() {
+
+    func testOldPower() {
         let max = 20
         for ix in 1...6 {
             for iy in 0...max {
@@ -164,9 +164,22 @@ final class BinaryTests: XCTestCase {
                 XCTAssertEqual(Binary.build(power), Binary.build(ix).pow(Binary.build(iy)), "\(ix)^\(iy) != \(power)")
             }
         }
-        
+
         let power = Binary.build(2).pow(Binary.build(135))
         XCTAssertEqual(power.description, "43556142965880123323311949751266331066368")
+    }
+
+    func testPower() {
+        let max = 20
+        for ix in -6...6 {
+            for iy in 0...max {
+                let power: Int = Int(pow(Double(ix), Double(iy)))
+                XCTAssertEqual(BinaryInteger.build(power), BinaryInteger.build(ix).pow(BinaryInteger.build(iy)), "\(ix)^\(iy) != \(power)")
+            }
+        }
+
+        let power = BinaryInteger.build(2).pow(BinaryInteger.build(135))
+        XCTAssertEqual(power.description, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010...")
     }
     
     func testDividing() throws {

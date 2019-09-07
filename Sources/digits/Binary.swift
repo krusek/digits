@@ -539,6 +539,17 @@ extension BinaryInteger {
             return d * rhs + tail * rhs.shifted()
         }
     }
+
+    public func pow(_ power: BinaryInteger, partial: BinaryInteger = .one) -> BinaryInteger {
+        switch power {
+        case .empty:
+            return partial
+        case .list(.one, let tail):
+            return (self * self).pow(tail, partial: partial * self)
+        case .list(.zero, let tail):
+            return (self * self).pow(tail, partial: partial)
+        }
+    }
 }
 
 extension List where Element == Digit, Empty == Void {
